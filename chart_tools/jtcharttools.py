@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from datetime import date
+import math
 
 def chart_mean_sd(data_df, period, h_width=0.25):
     """Plots the current data with indication of range, mean and sd
@@ -55,3 +57,61 @@ def chart_mean_sd(data_df, period, h_width=0.25):
     plt.xticks(x_rng, x_labels) #Remap back to numerical
 
     return fig, stats_df
+
+def sfe_date(year, month):
+    """Works out the SFE date - the Thu before second Fri
+
+    Parameters
+    ----------
+    year - the year
+    month - a number from 1-12 representing the month
+
+    Returns
+    -------
+    sfe_date - returns the SFE date for the month, if not quarter returns
+    the next sfe date
+    """
+
+    # Work out the month required
+    sfe_month = math.ceil((month/12.0)*4) * 3
+
+    # First day of the month
+    first_day = date(year, sfe_month, 1)
+
+    # Work out Thu before 2nd Fri
+    day_week = first_day.weekday()
+    if day_week <= 4:
+        sfe_thu = (4 - day_week) + 7
+    else:
+        sfe_thu = (11 - day_week) + 7
+
+    return date(year, sfe_month, sfe_thu)
+
+def imm_date(year, month):
+    """Works out the IMM date - 3rd Wed
+
+    Parameters
+    ----------
+    year - the year
+    month - a number from 1-12 representing the month
+
+    Returns
+    -------
+    imm_date - returns the IMM date for the month, if not quarter returns
+    the next sfe date
+    """
+
+    # Work out the month required
+    imm_month = math.ceil((month/12.0)*4) * 3
+
+    # First day of the month
+    first_day = date(year, imm_month, 1)
+
+    # Work out Thu before 2nd Fri
+    day_week = first_day.weekday()
+    if day_week <= 4:
+        imm_wed = (2 - day_week) + 15
+    else:
+        imm_wed = (9 - day_week) + 15
+
+    return date(year, imm_month, imm_wed)
